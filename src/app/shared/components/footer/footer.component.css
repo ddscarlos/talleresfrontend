@@ -1,0 +1,11 @@
+.footer {
+  margin-top: auto;
+}
+
+.footer a {
+  transition: color 0.3s;
+}
+
+.footer a:hover {
+  color: #fff !important;
+}

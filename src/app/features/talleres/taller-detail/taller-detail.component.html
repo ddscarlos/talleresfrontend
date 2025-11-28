@@ -1,0 +1,48 @@
+<div class="taller-detail-container">
+  <button class="btn-back" (click)="volver()">← Volver</button>
+
+  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="taller-detail" *ngIf="!loading && taller">
+    <h2>{{ taller.nombre }}</h2>
+
+    <div class="taller-content">
+      <div class="taller-info">
+        <p class="descripcion">{{ taller.descripcion }}</p>
+
+        <div class="info-section">
+          <h3>Información del Taller</h3>
+          <div class="info-item">
+            <strong>Duración:</strong> {{ taller.duracion }} horas
+          </div>
+          <div class="info-item">
+            <strong>Precio:</strong> ${{ taller.precio }}
+          </div>
+          <div class="info-item">
+            <strong>Cupos Disponibles:</strong> {{ taller.cuposDisponibles }}
+          </div>
+          <div class="info-item">
+            <strong>Instructor:</strong> {{ taller.instructor }}
+          </div>
+          <div class="info-item">
+            <strong>Fecha de Inicio:</strong> {{ taller.fechaInicio | date:'dd/MM/yyyy' }}
+          </div>
+        </div>
+
+        <div class="action-section">
+          <button
+            class="btn btn-primary btn-large"
+            (click)="reservar()"
+            [disabled]="reservando || taller.cuposDisponibles === 0"
+          >
+            {{ reservando ? 'Reservando...' : taller.cuposDisponibles === 0 ? 'Sin Cupos' : 'Reservar Taller' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

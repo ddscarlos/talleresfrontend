@@ -1,0 +1,60 @@
+<div class="reserva-detail-container">
+  <button class="btn-back" (click)="volver()">← Volver</button>
+
+  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="reserva-detail" *ngIf="!loading && reserva">
+    <div class="reserva-header">
+      <h2>Detalle de Reserva</h2>
+      <span class="estado-badge" [ngClass]="getEstadoClass(reserva.estado)">
+        {{ reserva.estado }}
+      </span>
+    </div>
+
+    <div class="info-section">
+      <h3>Información del Taller</h3>
+      <div class="info-item">
+        <strong>Nombre:</strong> {{ reserva.taller?.nombre }}
+      </div>
+      <div class="info-item">
+        <strong>Descripción:</strong> {{ reserva.taller?.descripcion }}
+      </div>
+      <div class="info-item">
+        <strong>Duración:</strong> {{ reserva.taller?.duracion }} horas
+      </div>
+      <div class="info-item">
+        <strong>Instructor:</strong> {{ reserva.taller?.instructor }}
+      </div>
+      <div class="info-item">
+        <strong>Fecha de Inicio:</strong> {{ reserva.taller?.fechaInicio | date:'dd/MM/yyyy' }}
+      </div>
+    </div>
+
+    <div class="info-section">
+      <h3>Información de la Reserva</h3>
+      <div class="info-item">
+        <strong>Fecha de Reserva:</strong> {{ reserva.fechaReserva | date:'dd/MM/yyyy HH:mm' }}
+      </div>
+      <div class="info-item">
+        <strong>Precio:</strong> ${{ reserva.taller?.precio }}
+      </div>
+      <div class="info-item">
+        <strong>Estado del Pago:</strong> {{ reserva.estadoPago || 'Pendiente' }}
+      </div>
+    </div>
+
+    <div class="action-section" *ngIf="reserva.estado !== 'cancelada'">
+      <button
+        class="btn btn-primary btn-large"
+        (click)="realizarPago()"
+        [disabled]="procesandoPago || reserva.estadoPago === 'pagado'"
+      >
+        {{ procesandoPago ? 'Procesando...' : reserva.estadoPago === 'pagado' ? 'Ya Pagado' : 'Realizar Pago' }}
+      </button>
+    </div>
+  </div>
+</div>

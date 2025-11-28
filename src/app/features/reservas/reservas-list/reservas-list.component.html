@@ -1,0 +1,46 @@
+<div class="reservas-container">
+  <h2>Mis Reservas</h2>
+
+  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="reservas-list" *ngIf="!loading && reservas.length > 0">
+    <div class="reserva-card" *ngFor="let reserva of reservas">
+      <div class="reserva-header">
+        <h3>{{ reserva.taller?.nombre }}</h3>
+        <span class="estado-badge" [ngClass]="getEstadoClass(reserva.estado)">
+          {{ reserva.estado }}
+        </span>
+      </div>
+
+      <div class="reserva-info">
+        <p><strong>Fecha de Reserva:</strong> {{ reserva.fechaReserva | date:'dd/MM/yyyy HH:mm' }}</p>
+        <p><strong>Precio:</strong> ${{ reserva.taller?.precio }}</p>
+        <p *ngIf="reserva.taller?.fechaInicio">
+          <strong>Fecha de Inicio:</strong> {{ reserva.taller.fechaInicio | date:'dd/MM/yyyy' }}
+        </p>
+      </div>
+
+      <div class="reserva-actions">
+        <button class="btn btn-primary" (click)="verDetalle(reserva.id)">
+          Ver Detalle
+        </button>
+        <button
+          class="btn btn-danger"
+          (click)="cancelarReserva(reserva.id)"
+          *ngIf="reserva.estado !== 'cancelada'"
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="no-reservas" *ngIf="!loading && reservas.length === 0">
+    <p>No tienes reservas registradas</p>
+    <button class="btn btn-primary" routerLink="/talleres">Explorar Talleres</button>
+  </div>
+</div>

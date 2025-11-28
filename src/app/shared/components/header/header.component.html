@@ -1,0 +1,59 @@
+<header class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" routerLink="/inicio">
+      <span class="fs-4">🎨 Talleres Culturales</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/inicio" routerLinkActive="active">Inicio</a>
+        </li>
+        <li class="nav-item" *ngIf="isAuthenticated">
+          <a class="nav-link" routerLink="/talleres/catalogo" routerLinkActive="active">Talleres</a>
+        </li>
+        <li class="nav-item" *ngIf="isAuthenticated">
+          <a class="nav-link" routerLink="/reservas/mis-reservas" routerLinkActive="active">
+            <i class="ri-calendar-check-line"></i> Mis Reservas
+          </a>
+        </li>
+
+        <li class="nav-item dropdown" *ngIf="isAuthenticated && currentUser">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
+             data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="assets/images/default-avatar.png" class="rounded-circle me-2"
+                 width="35" height="35" alt="User">
+            <span>{{ currentUser.nombres }}</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li>
+              <h6 class="dropdown-header">Bienvenido {{ currentUser.nombres }}!</h6>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item" routerLink="/reservas/mis-reservas">
+                <i class="ri-calendar-check-line me-2"></i>Mis Reservas
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item" href="#" (click)="logout(); $event.preventDefault()">
+                <i class="ri-logout-box-line me-2"></i>Cerrar Sesión
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item" *ngIf="!isAuthenticated">
+          <a class="btn btn-primary" routerLink="/registro">
+            <i class="ri-user-add-line"></i> Registrarse
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>

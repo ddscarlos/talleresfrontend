@@ -1,0 +1,26 @@
+<div class="talleres-container">
+  <h2>Talleres Disponibles</h2>
+
+  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="talleres-grid" *ngIf="!loading && talleres.length > 0">
+    <div class="taller-card" *ngFor="let taller of talleres" (click)="verDetalle(taller.id)">
+      <h3>{{ taller.nombre }}</h3>
+      <p class="descripcion">{{ taller.descripcion }}</p>
+      <div class="taller-info">
+        <p><strong>Duración:</strong> {{ taller.duracion }} horas</p>
+        <p><strong>Precio:</strong> ${{ taller.precio }}</p>
+        <p><strong>Cupos:</strong> {{ taller.cuposDisponibles }}</p>
+      </div>
+      <button class="btn btn-primary">Ver Detalle</button>
+    </div>
+  </div>
+
+  <div class="no-talleres" *ngIf="!loading && talleres.length === 0">
+    <p>No hay talleres disponibles en este momento</p>
+  </div>
+</div>

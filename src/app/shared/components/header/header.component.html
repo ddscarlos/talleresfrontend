@@ -1,57 +1,93 @@
-<header class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+<header class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top" style="background: white !important;">
   <div class="container-fluid">
-    <a class="navbar-brand fw-bold" routerLink="/inicio">
-      <span class="fs-4">🎨 Talleres Culturales</span>
+    
+    <!-- Logo/Brand -->
+    <a class="navbar-brand fw-bold" routerLink="/inicio" style="color: #667eea; font-size: 1.5rem;">
+      <i class="ri-palette-line me-2"></i>
+      Talleres Culturales
     </a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <!-- Hamburger Toggle -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false">
       <span class="navbar-toggler-icon"></span>
     </button>
 
+    <!-- Navigation Menu -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto align-items-center">
+        
+        <!-- Inicio -->
         <li class="nav-item">
-          <a class="nav-link" routerLink="/inicio" routerLinkActive="active">Inicio</a>
-        </li>
-        <li class="nav-item" *ngIf="isAuthenticated">
-          <a class="nav-link" routerLink="/talleres/catalogo" routerLinkActive="active">Talleres</a>
-        </li>
-        <li class="nav-item" *ngIf="isAuthenticated">
-          <a class="nav-link" routerLink="/reservas/mis-reservas" routerLinkActive="active">
-            <i class="ri-calendar-check-line"></i> Mis Reservas
+          <a class="nav-link" routerLink="/inicio" routerLinkActive="active">
+            <i class="ri-home-line me-1"></i>Inicio
           </a>
         </li>
 
-        <li class="nav-item dropdown" *ngIf="isAuthenticated && currentUser">
-          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
-             data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="assets/images/default-avatar.png" class="rounded-circle me-2"
-                 width="35" height="35" alt="User">
-            <span>{{ currentUser.nombres }}</span>
+        <!-- Talleres (solo autenticados) -->
+        <li class="nav-item" *ngIf="isAuthenticated">
+          <a class="nav-link" routerLink="/talleres" routerLinkActive="active">
+            <i class="ri-booklet-line me-1"></i>Talleres
           </a>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+        </li>
+
+        <!-- Mis Reservas (solo autenticados) -->
+        <li class="nav-item" *ngIf="isAuthenticated">
+          <a class="nav-link" routerLink="/reservas" routerLinkActive="active">
+            <i class="ri-calendar-check-line me-1"></i>Mis Reservas
+          </a>
+        </li>
+
+        <!-- Separador -->
+        <li class="nav-item" *ngIf="!isAuthenticated">
+          <hr class="my-2">
+        </li>
+
+        <!-- Login (no autenticados) -->
+        <li class="nav-item" *ngIf="!isAuthenticated">
+          <a class="nav-link" routerLink="/registro/login" routerLinkActive="active">
+            <i class="ri-login-circle-line me-1"></i>Iniciar Sesión
+          </a>
+        </li>
+
+        <!-- Registro (no autenticados) -->
+        <li class="nav-item" *ngIf="!isAuthenticated">
+          <a class="btn btn-primary ms-2" routerLink="/registro">
+            <i class="ri-user-add-line me-1"></i>Registrarse
+          </a>
+        </li>
+
+        <!-- User Dropdown (autenticados) -->
+        <li class="nav-item dropdown" *ngIf="isAuthenticated && currentUser">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="javascript:void(0)" id="userDropdown" 
+             data-bs-toggle="dropdown" aria-expanded="false" style="color: #667eea;">
+            <i class="ri-user-circle-line me-2" style="font-size: 24px;"></i>
+            <span class="d-none d-lg-inline">{{ currentUser.nombres }}</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="userDropdown">
             <li>
-              <h6 class="dropdown-header">Bienvenido {{ currentUser.nombres }}!</h6>
+              <h6 class="dropdown-header">
+                <i class="ri-user-line me-1"></i>{{ currentUser.nombres }} {{ currentUser.apellidos }}
+              </h6>
             </li>
+            <li><span class="dropdown-item-text small text-muted">{{ currentUser.email }}</span></li>
             <li><hr class="dropdown-divider"></li>
             <li>
-              <a class="dropdown-item" routerLink="/reservas/mis-reservas">
-                <i class="ri-calendar-check-line me-2"></i>Mis Reservas
+              <a class="dropdown-item" routerLink="/reservas">
+                <i class="ri-calendar-check-line me-2" style="color: #667eea;"></i>Mis Reservas
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="javascript:void(0)">
+                <i class="ri-settings-3-line me-2" style="color: #667eea;"></i>Configuración
               </a>
             </li>
             <li><hr class="dropdown-divider"></li>
             <li>
-              <a class="dropdown-item" href="#" (click)="logout(); $event.preventDefault()">
+              <a class="dropdown-item text-danger" href="javascript:void(0)" (click)="logout(); $event.preventDefault()">
                 <i class="ri-logout-box-line me-2"></i>Cerrar Sesión
               </a>
             </li>
           </ul>
-        </li>
-
-        <li class="nav-item" *ngIf="!isAuthenticated">
-          <a class="btn btn-primary" routerLink="/registro">
-            <i class="ri-user-add-line"></i> Registrarse
-          </a>
         </li>
       </ul>
     </div>

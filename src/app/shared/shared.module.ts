@@ -8,11 +8,15 @@ import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
 
+// Pipes
+import { FilterPipe } from './pipes/filter.pipe';
+
 @NgModule({
   declarations: [
     HeaderComponent,
     FooterComponent,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    FilterPipe
   ],
   imports: [
     CommonModule,
@@ -26,7 +30,8 @@ import { LoadingSpinnerComponent } from './components/loading-spinner/loading-sp
     LoadingSpinnerComponent,
     CommonModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    FilterPipe
   ]
 })
 export class SharedModule { }

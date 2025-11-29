@@ -1,60 +1,220 @@
-<div class="reserva-detail-container">
-  <button class="btn-back" (click)="volver()">← Volver</button>
-
-  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
-
-  <div class="error-message" *ngIf="errorMessage">
-    {{ errorMessage }}
+<!-- BREADCRUMB -->
+<div class="bg-light py-3">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="javascript:void(0)" (click)="volver()" class="text-decoration-none">Mis Reservas</a></li>
+        <li class="breadcrumb-item active" *ngIf="reserva">Reserva #{{ reserva.res_numero }}</li>
+      </ol>
+    </nav>
   </div>
+</div>
 
-  <div class="reserva-detail" *ngIf="!loading && reserva">
-    <div class="reserva-header">
-      <h2>Detalle de Reserva</h2>
-      <span class="estado-badge" [ngClass]="getEstadoClass(reserva.estado)">
-        {{ reserva.estado }}
-      </span>
-    </div>
+<!-- LOADING -->
+<div *ngIf="loading" class="d-flex justify-content-center align-items-center py-5" style="min-height: 500px;">
+  <app-loading-spinner></app-loading-spinner>
+</div>
 
-    <div class="info-section">
-      <h3>Información del Taller</h3>
-      <div class="info-item">
-        <strong>Nombre:</strong> {{ reserva.taller?.nombre }}
-      </div>
-      <div class="info-item">
-        <strong>Descripción:</strong> {{ reserva.taller?.descripcion }}
-      </div>
-      <div class="info-item">
-        <strong>Duración:</strong> {{ reserva.taller?.duracion }} horas
-      </div>
-      <div class="info-item">
-        <strong>Instructor:</strong> {{ reserva.taller?.instructor }}
-      </div>
-      <div class="info-item">
-        <strong>Fecha de Inicio:</strong> {{ reserva.taller?.fechaInicio | date:'dd/MM/yyyy' }}
-      </div>
-    </div>
+<!-- ERROR -->
+<div *ngIf="errorMessage && !loading" class="container my-5">
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Error:</strong> {{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+  </div>
+</div>
 
-    <div class="info-section">
-      <h3>Información de la Reserva</h3>
-      <div class="info-item">
-        <strong>Fecha de Reserva:</strong> {{ reserva.fechaReserva | date:'dd/MM/yyyy HH:mm' }}
+<!-- DETALLE DE RESERVA -->
+<section *ngIf="!loading && reserva" class="py-5">
+  <div class="container">
+    
+    <!-- Header -->
+    <div class="row align-items-center mb-5">
+      <div class="col-md-8">
+        <h1 class="fw-bold mb-3">Reserva #{{ reserva.res_numero }}</h1>
+        <p class="text-muted">
+          Registrada el {{ reserva.res_fecha_registro | date:'dd/MM/yyyy HH:mm' }}
+        </p>
       </div>
-      <div class="info-item">
-        <strong>Precio:</strong> ${{ reserva.taller?.precio }}
-      </div>
-      <div class="info-item">
-        <strong>Estado del Pago:</strong> {{ reserva.estadoPago || 'Pendiente' }}
+      <div class="col-md-4 text-end">
+        <span class="badge" [style.background]="getColorEstado()" style="padding: 12px 24px; font-size: 16px;">
+          {{ reserva.estado?.esr_nombre }}
+        </span>
       </div>
     </div>
 
-    <div class="action-section" *ngIf="reserva.estado !== 'cancelada'">
-      <button
-        class="btn btn-primary btn-large"
-        (click)="realizarPago()"
-        [disabled]="procesandoPago || reserva.estadoPago === 'pagado'"
-      >
-        {{ procesandoPago ? 'Procesando...' : reserva.estadoPago === 'pagado' ? 'Ya Pagado' : 'Realizar Pago' }}
+    <div class="row g-4 mb-5">
+      
+      <!-- Información principal -->
+      <div class="col-lg-8">
+        
+        <!-- Información del Taller -->
+        <div class="card border-0 rounded-lg mb-4 p-4" style="background: #f8f9fa;">
+          <h5 class="fw-bold mb-4" style="color: #667eea;">Información del Taller</h5>
+          
+          <div class="mb-3 pb-3 border-bottom">
+            <small class="text-muted d-block">Taller</small>
+            <h6 class="fw-bold">{{ reserva.programacion?.servicio?.taller?.tal_nombre }}</h6>
+          </div>
+
+          <div class="mb-3 pb-3 border-bottom">
+            <small class="text-muted d-block">Descripción</small>
+            <p class="mb-0">{{ reserva.programacion?.servicio?.taller?.tal_descripcion }}</p>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <small class="text-muted d-block">Duración</small>
+              <span class="badge bg-secondary">{{ reserva.programacion?.servicio?.taller?.tal_duracion }} minutos</span>
+            </div>
+            <div class="col-md-4 mb-3">
+              <small class="text-muted d-block">Cupos</small>
+              <span class="badge bg-primary">{{ reserva.res_cupos }} cupo(s)</span>
+            </div>
+            <div class="col-md-4 mb-3">
+              <small class="text-muted d-block">Edad requerida</small>
+              <span class="badge bg-info">{{ reserva.programacion?.servicio?.taller?.tal_edad_min }}-{{ reserva.programacion?.servicio?.taller?.tal_edad_max }} años</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información de la Reserva -->
+        <div class="card border-0 rounded-lg mb-4 p-4" style="background: #f8f9fa;">
+          <h5 class="fw-bold mb-4" style="color: #667eea;">Detalles de la Reserva</h5>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <small class="text-muted d-block">Número de Reserva</small>
+              <h6 class="fw-bold">{{ reserva.res_numero }}</h6>
+            </div>
+            <div class="col-md-6 mb-3">
+              <small class="text-muted d-block">Fecha de Registro</small>
+              <h6 class="fw-bold">{{ reserva.res_fecha_registro | date:'dd/MM/yyyy HH:mm' }}</h6>
+            </div>
+            <div class="col-md-6 mb-3">
+              <small class="text-muted d-block">Cantidad de Cupos</small>
+              <h6 class="fw-bold">{{ reserva.res_cupos }}</h6>
+            </div>
+            <div class="col-md-6 mb-3">
+              <small class="text-muted d-block">Total a Pagar</small>
+              <h6 class="fw-bold" style="color: #28a745;">S/ {{ reserva.res_precio_total }}</h6>
+            </div>
+          </div>
+
+          <div *ngIf="reserva.res_observaciones" class="pt-3 border-top">
+            <small class="text-muted d-block mb-2">Observaciones</small>
+            <p class="mb-0">{{ reserva.res_observaciones }}</p>
+          </div>
+        </div>
+
+        <!-- Historial de Pagos -->
+        <div class="card border-0 rounded-lg p-4" style="background: #f8f9fa;">
+          <h5 class="fw-bold mb-4" style="color: #667eea;">Historial de Pagos</h5>
+          
+          <div *ngIf="loadingPagos" class="text-center py-3">
+            <span class="spinner-border spinner-border-sm"></span>
+          </div>
+
+          <div *ngIf="!loadingPagos && pagos.length === 0" class="alert alert-info">
+            <i class="ri-information-line me-2"></i>
+            No hay pagos registrados para esta reserva
+          </div>
+
+          <div *ngIf="!loadingPagos && pagos.length > 0">
+            <div *ngFor="let pago of pagos" class="mb-3 pb-3 border-bottom last:border-0">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{{ pago.tipo_pago?.tpa_nombre }}</strong>
+                  <small class="d-block text-muted">{{ pago.pag_fecha_pago | date:'dd/MM/yyyy HH:mm' }}</small>
+                </div>
+                <div class="text-end">
+                  <div class="fw-bold">S/ {{ pago.pag_monto }}</div>
+                  <small class="badge" [style.background]="pago.pag_estado === 'CONFIRMADO' ? '#28a745' : '#ffc107'">
+                    {{ pago.pag_estado }}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="col-lg-4">
+        
+        <!-- Card de resumen -->
+        <div class="card border-0 rounded-lg shadow-lg sticky-top p-4" style="top: 20px;">
+          
+          <!-- Estado -->
+          <div class="mb-4 pb-4 border-bottom text-center">
+            <span class="badge" [style.background]="getColorEstado()" style="padding: 12px 24px; font-size: 16px;">
+              {{ reserva.estado?.esr_nombre }}
+            </span>
+          </div>
+
+          <!-- Monto total -->
+          <div class="mb-4">
+            <small class="text-muted d-block">Total a pagar</small>
+            <h3 class="fw-bold mb-0" style="color: #667eea;">S/ {{ reserva.res_precio_total }}</h3>
+            <small class="text-muted">{{ reserva.res_cupos }} cupo(s) × cuota unitaria</small>
+          </div>
+
+          <!-- Acciones -->
+          <div class="d-grid gap-2 mb-3">
+            <button 
+              *ngIf="reserva.estado?.esr_nombre === 'PENDIENTE'"
+              class="btn btn-primary btn-lg fw-bold"
+              (click)="realizarPago()">
+              <i class="ri-credit-card-line me-2"></i>
+              Realizar Pago
+            </button>
+
+            <button 
+              *ngIf="reserva.estado?.esr_nombre === 'CONFIRMADA'"
+              class="btn btn-success btn-lg fw-bold"
+              disabled>
+              <i class="ri-check-line me-2"></i>
+              Pagado
+            </button>
+
+            <button 
+              class="btn btn-outline-secondary btn-lg fw-bold"
+              (click)="descargarComprobante()">
+              <i class="ri-file-pdf-line me-2"></i>
+              Descargar Comprobante
+            </button>
+          </div>
+
+          <!-- Botón cancelar -->
+          <div class="d-grid gap-2">
+            <button 
+              *ngIf="reserva.estado?.esr_nombre !== 'CANCELADA' && reserva.estado?.esr_nombre !== 'COMPLETADA'"
+              class="btn btn-outline-danger btn-sm"
+              (click)="cancelarReserva()">
+              <i class="ri-delete-bin-line me-1"></i>
+              Cancelar Reserva
+            </button>
+          </div>
+
+          <!-- Info -->
+          <div class="mt-4 pt-4 border-top text-center">
+            <small class="text-muted d-block mb-2">
+              <i class="ri-information-line me-1"></i>
+              ¿Necesitas ayuda?
+            </small>
+            <small>
+              <a href="javascript:void(0)" class="text-decoration-none">Contacta con soporte</a>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón volver -->
+    <div class="text-center">
+      <button class="btn btn-outline-secondary" (click)="volver()">
+        <i class="ri-arrow-left-line me-2"></i>
+        Volver a Mis Reservas
       </button>
     </div>
   </div>
-</div>
+</section>

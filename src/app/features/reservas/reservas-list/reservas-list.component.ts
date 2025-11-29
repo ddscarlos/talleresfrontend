@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReservasService } from '../../../services/reservas.service';
+import { Reserva } from '../../../models/reserva.model';
 
 @Component({
   selector: 'app-reservas-list',
@@ -8,9 +9,19 @@ import { ReservasService } from '../../../services/reservas.service';
   styleUrls: ['./reservas-list.component.css']
 })
 export class ReservasListComponent implements OnInit {
-  reservas: any[] = [];
+  reservas: Reserva[] = [];
   loading = false;
   errorMessage = '';
+  successMessage = '';
+  filtroEstado: string = '';
+
+  estados = [
+    { id: '', nombre: 'Todas' },
+    { id: 'PENDIENTE', nombre: 'Pendientes' },
+    { id: 'CONFIRMADA', nombre: 'Confirmadas' },
+    { id: 'COMPLETADA', nombre: 'Completadas' },
+    { id: 'CANCELADA', nombre: 'Canceladas' }
+  ];
 
   constructor(
     private reservasService: ReservasService,
@@ -23,7 +34,8 @@ export class ReservasListComponent implements OnInit {
 
   loadReservas(): void {
     this.loading = true;
-    this.reservasService.getReservas().subscribe(
+    this.errorMessage = '';
+    this.reservasService.getMisReservas().subscribe(
       data => {
         this.reservas = data;
         this.loading = false;
@@ -35,20 +47,50 @@ export class ReservasListComponent implements OnInit {
     );
   }
 
+  obtenerReservasFiltradas(): Reserva[] {
+    if (!this.filtroEstado) {
+      return this.reservas;
+    }
+    return this.reservas.filter(r => r.estado && r.estado.esr_nombre === this.filtroEstado);
+  }
+
   verDetalle(id: number): void {
     this.router.navigate(['/reservas', id]);
   }
 
+  descargarPDF(id: number): void {
+    // TODO: Implementar descarga de PDF
+    alert('Función en desarrollo');
+  }
+
   cancelarReserva(id: number): void {
-    if (confirm('¿Está seguro de cancelar esta reserva?')) {
-      this.reservasService.cancelarReserva(id).subscribe(
+    if (confirm('¿Estás seguro de que deseas cancelar esta reserva? Esta acción no se puede deshacer.')) {
+      this.reservasService.cancelarReserva(id, 'Cancelado por usuario').subscribe(
         () => {
-          this.loadReservas();
+          this.successMessage = 'Reserva cancelada correctamente';
+          setTimeout(() => {
+            this.successMessage = '';
+            this.loadReservas();
+          }, 2000);
         },
         error => {
           this.errorMessage = 'Error al cancelar la reserva';
         }
       );
+    }
+  }
+
+  realizarPago(id: number): void {
+    this.router.navigate(['/reservas', id, 'pago']);
+  }
+
+  getColorEstado(estado: string): string {
+    switch (estado) {
+      case 'PENDIENTE': return '#ffc107';
+      case 'CONFIRMADA': return '#28a745';
+      case 'COMPLETADA': return '#17a2b8';
+      case 'CANCELADA': return '#dc3545';
+      default: return '#6c757d';
     }
   }
 

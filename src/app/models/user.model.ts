@@ -10,6 +10,8 @@ export interface User {
   telefono: string;
   email: string;
   edad?: number;
+  estado?: string;
+  fecha_registro?: string;
 
   // Dirección (opcional)
   departamento?: string;
@@ -32,6 +34,7 @@ export interface LoginResponse {
   user: User;
   token: string;
   refresh_token: string;
+  message?: string;
 }
 
 export interface RegisterRequest {
@@ -44,6 +47,7 @@ export interface RegisterRequest {
   telefono: string;
   email: string;
   password: string;
+  confirmar_password?: string;
   departamento?: string;
   provincia?: string;
   distrito?: string;

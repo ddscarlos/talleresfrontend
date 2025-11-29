@@ -1,48 +1,195 @@
-<div class="taller-detail-container">
-  <button class="btn-back" (click)="volver()">← Volver</button>
-
-  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
-
-  <div class="error-message" *ngIf="errorMessage">
-    {{ errorMessage }}
+<!-- BREADCRUMB -->
+<div class="bg-light py-3">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="javascript:void(0)" (click)="volver()" class="text-decoration-none">Talleres</a></li>
+        <li class="breadcrumb-item active" *ngIf="taller">{{ taller.tal_nombre }}</li>
+      </ol>
+    </nav>
   </div>
+</div>
 
-  <div class="taller-detail" *ngIf="!loading && taller">
-    <h2>{{ taller.nombre }}</h2>
+<!-- LOADING -->
+<div *ngIf="loading" class="d-flex justify-content-center align-items-center py-5" style="min-height: 500px;">
+  <app-loading-spinner></app-loading-spinner>
+</div>
 
-    <div class="taller-content">
-      <div class="taller-info">
-        <p class="descripcion">{{ taller.descripcion }}</p>
+<!-- ERROR -->
+<div *ngIf="errorMessage && !loading" class="container my-5">
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Error:</strong> {{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+  </div>
+</div>
 
-        <div class="info-section">
-          <h3>Información del Taller</h3>
-          <div class="info-item">
-            <strong>Duración:</strong> {{ taller.duracion }} horas
-          </div>
-          <div class="info-item">
-            <strong>Precio:</strong> ${{ taller.precio }}
-          </div>
-          <div class="info-item">
-            <strong>Cupos Disponibles:</strong> {{ taller.cuposDisponibles }}
-          </div>
-          <div class="info-item">
-            <strong>Instructor:</strong> {{ taller.instructor }}
-          </div>
-          <div class="info-item">
-            <strong>Fecha de Inicio:</strong> {{ taller.fechaInicio | date:'dd/MM/yyyy' }}
+<!-- DETALLE DEL TALLER -->
+<section *ngIf="!loading && taller" class="py-5">
+  <div class="container">
+    <div class="row g-5">
+      
+      <!-- Contenido principal -->
+      <div class="col-lg-8">
+        
+        <!-- Imagen -->
+        <div style="height: 400px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; display: flex; align-items: center; justify-content: center; margin-bottom: 30px;">
+          <div style="text-align: center;">
+            <i class="ri-image-add-line" style="font-size: 80px; color: white; opacity: 0.5;"></i>
+            <p class="text-white mt-3">Imagen del taller</p>
           </div>
         </div>
 
-        <div class="action-section">
-          <button
-            class="btn btn-primary btn-large"
-            (click)="reservar()"
-            [disabled]="reservando || taller.cuposDisponibles === 0"
-          >
-            {{ reservando ? 'Reservando...' : taller.cuposDisponibles === 0 ? 'Sin Cupos' : 'Reservar Taller' }}
-          </button>
+        <!-- Información principal -->
+        <div class="mb-5">
+          <h1 class="fw-bold mb-3" style="color: #667eea; font-size: 2.5rem;">{{ taller.tal_nombre }}</h1>
+          
+          <p class="lead text-muted mb-4">{{ taller.tal_descripcion }}</p>
+
+          <!-- Badges -->
+          <div class="mb-4">
+            <span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 10px 20px; font-size: 14px; margin-right: 10px;">
+              <i class="ri-calendar-line me-1"></i> {{ taller.tal_duracion }} minutos
+            </span>
+            <span class="badge" style="background: #28a745; padding: 10px 20px; font-size: 14px; margin-right: 10px;">
+              <i class="ri-price-tag-3-line me-1"></i> S/ {{ taller.tal_precio_desde }}
+            </span>
+            <span class="badge" style="background: #17a2b8; padding: 10px 20px; font-size: 14px;">
+              <i class="ri-user-line me-1"></i> {{ taller.tal_edad_min }}-{{ taller.tal_edad_max }} años
+            </span>
+          </div>
+        </div>
+
+        <!-- Secciones de información -->
+        <div class="row g-4 mb-5">
+          <div class="col-md-6">
+            <div class="card border-0 p-4" style="background: #f8f9fa; border-left: 4px solid #667eea;">
+              <h5 class="fw-bold mb-3" style="color: #667eea;">Requisitos</h5>
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <i class="ri-check-line" style="color: #28a745;"></i>
+                  <strong>Edad:</strong> {{ taller.tal_edad_min }} a {{ taller.tal_edad_max }} años
+                </li>
+                <li class="mb-2">
+                  <i class="ri-check-line" style="color: #28a745;"></i>
+                  <strong>Experiencia:</strong> No requerida
+                </li>
+                <li>
+                  <i class="ri-check-line" style="color: #28a745;"></i>
+                  <strong>Material:</strong> Proporcionado
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card border-0 p-4" style="background: #f8f9fa; border-left: 4px solid #764ba2;">
+              <h5 class="fw-bold mb-3" style="color: #764ba2;">Incluye</h5>
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <i class="ri-check-line" style="color: #28a745;"></i>
+                  <strong>Instrucción profesional</strong>
+                </li>
+                <li class="mb-2">
+                  <i class="ri-check-line" style="color: #28a745;"></i>
+                  <strong>Material educativo</strong>
+                </li>
+                <li>
+                  <i class="ri-check-line" style="color: #28a745;"></i>
+                  <strong>Certificado de participación</strong>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Descripción completa -->
+        <div class="mb-5">
+          <h3 class="fw-bold mb-3" style="color: #667eea;">Acerca de este Taller</h3>
+          <p class="text-muted lh-lg">
+            {{ taller.tal_descripcion }}
+            Este taller ha sido diseñado para proporcionar una experiencia integral en {{ taller.tal_nombre }}. 
+            A través de una metodología práctica e interactiva, aprenderás desde los conceptos fundamentales 
+            hasta técnicas avanzadas.
+          </p>
+          <p class="text-muted lh-lg">
+            Nuestros instructores certificados te guiarán en cada paso del camino, asegurándose de que obtengas 
+            el máximo valor de tu experiencia de aprendizaje.
+          </p>
+        </div>
+
+        <!-- Validación de edad -->
+        <div *ngIf="!puedeTomar()" class="alert alert-warning d-flex align-items-center" role="alert">
+          <i class="ri-alert-line me-3" style="font-size: 24px;"></i>
+          <div>
+            <strong>No cumples los requisitos de edad</strong>
+            <p class="mb-0 small">Este taller es para edades entre {{ taller.tal_edad_min }} y {{ taller.tal_edad_max }} años</p>
+          </div>
+        </div>
+
+        <div *ngIf="puedeTomar()" class="alert alert-success d-flex align-items-center" role="alert">
+          <i class="ri-check-circle-line me-3" style="font-size: 24px;"></i>
+          <div>
+            <strong>Cumples los requisitos</strong>
+            <p class="mb-0 small">Puedes inscribirte a este taller</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="col-lg-4">
+        <!-- Card de reserva -->
+        <div class="card border-0 rounded-lg shadow-lg sticky-top" style="top: 20px;">
+          <div class="card-body p-5">
+            <h5 class="card-title fw-bold mb-4" style="color: #667eea;">Comenzar tu Reserva</h5>
+
+            <!-- Precio -->
+            <div class="mb-4">
+              <small class="text-muted d-block">Precio por cupo</small>
+              <h3 class="fw-bold mb-0" style="color: #667eea;">S/ {{ taller.tal_precio_desde }}</h3>
+            </div>
+
+            <!-- Información -->
+            <div class="mb-4 p-3" style="background: #f8f9fa; border-radius: 10px;">
+              <div class="d-flex justify-content-between mb-2">
+                <small class="text-muted">Duración</small>
+                <small class="fw-bold">{{ taller.tal_duracion }} minutos</small>
+              </div>
+              <div class="d-flex justify-content-between">
+                <small class="text-muted">Rango de edad</small>
+                <small class="fw-bold">{{ taller.tal_edad_min }}-{{ taller.tal_edad_max }}</small>
+              </div>
+            </div>
+
+            <!-- Botón de reserva -->
+            <div class="d-grid gap-2">
+              <button 
+                class="btn btn-lg fw-bold"
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;"
+                [disabled]="!puedeTomar()"
+                (click)="irASedes()">
+                <i class="ri-check-double-line me-2"></i>
+                Continuar Reserva
+              </button>
+            </div>
+
+            <!-- Botón alterno -->
+            <button 
+              class="btn btn-outline-secondary w-100 mt-3"
+              (click)="volver()">
+              <i class="ri-arrow-left-line me-2"></i>
+              Volver al Catálogo
+            </button>
+
+            <!-- Info adicional -->
+            <div class="mt-4 p-3" style="background: #fff3cd; border-radius: 10px; border-left: 4px solid #ffc107;">
+              <small class="text-dark">
+                <i class="ri-information-line me-1"></i>
+                Selecciona una sede y fecha para completar tu reserva
+              </small>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>

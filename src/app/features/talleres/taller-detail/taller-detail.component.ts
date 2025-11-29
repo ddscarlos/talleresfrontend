@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TalleresService } from '../../../services/talleres.service';
-import { ReservasService } from '../../../services/reservas.service';
+import { AuthService } from '../../../services/auth.service';
+import { Taller } from '../../../models/taller.model';
 
 @Component({
   selector: 'app-taller-detail',
@@ -9,22 +10,30 @@ import { ReservasService } from '../../../services/reservas.service';
   styleUrls: ['./taller-detail.component.css']
 })
 export class TallerDetailComponent implements OnInit {
-  taller: any;
+  taller: Taller | null = null;
   loading = false;
   errorMessage = '';
-  reservando = false;
+  usuarioEdad = 0;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private talleresService: TalleresService,
-    private reservasService: ReservasService
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.calcularEdadUsuario();
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.loadTaller(+id);
+    }
+  }
+
+  calcularEdadUsuario(): void {
+    const usuario = this.authService.currentUserValue;
+    if (usuario && usuario.fecha_nacimiento) {
+      this.usuarioEdad = this.talleresService.calcularEdad(usuario.fecha_nacimiento);
     }
   }
 
@@ -42,24 +51,18 @@ export class TallerDetailComponent implements OnInit {
     );
   }
 
-  reservar(): void {
-    if (!this.taller) return;
-
-    this.reservando = true;
-    this.reservasService.crearReserva({
-      programacion_id: this.taller.id,
-      cupos: 1,
-      observaciones: ''
-    }).subscribe(
-      response => {
-        this.reservando = false;
-        this.router.navigate(['/reservas']);
-      },
-      error => {
-        this.reservando = false;
-        this.errorMessage = error.error && error.error.message ? error.error.message : 'Error al realizar la reserva';
-      }
+  puedeTomar(): boolean {
+    if (!this.taller || this.usuarioEdad === 0) return true;
+    return this.talleresService.validarEdadUsuario(
+      this.usuarioEdad,
+      this.taller.tal_edad_min,
+      this.taller.tal_edad_max
     );
+  }
+
+  irASedes(): void {
+    if (!this.taller) return;
+    this.router.navigate(['/talleres', this.taller.tal_id, 'sedes']);
   }
 
   volver(): void {
